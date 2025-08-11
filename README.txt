@@ -1,0 +1,3 @@
+I have done API testing using the Reqres.in fake REST API. It demonstrates all essential HTTP methods (GET, POST, PUT, PATCH, DELETE) and incorporates: Use of environment variables for Base URL Random data generation in Pre-request scripts Parsing of JSON responses Chai assertion checks (including deliberate failures) Dynamic variable passing across requests Clean and modular scripting practice
+
+Designed and tested using Postman Desktop App. By: Ahsan Murtaza

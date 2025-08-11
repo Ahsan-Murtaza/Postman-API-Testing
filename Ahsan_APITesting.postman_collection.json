@@ -1,0 +1,622 @@
+{
+	"info": {
+		"_postman_id": "897a9f4f-8b33-48a9-bdcd-f206fcf9a6b5",
+		"name": "Ahsan_APITesting",
+		"description": "I have done API testing using the Reqres.in fake REST API. It demonstrates all essential HTTP methods (GET, POST, PUT, PATCH, DELETE) and incorporates:\n\n- Use of environment variables for Base URL\n    \n- Random data generation in Pre-request scripts\n    \n- Parsing of JSON responses\n    \n- Chai assertion checks (including deliberate failures)\n    \n- Dynamic variable passing across requests\n    \n- Clean and modular scripting practice\n    \n\nDesigned and tested using Postman Desktop App.\n\nBy: Ahsan Murtaza",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46680606",
+		"_collection_link": "https://ahsanmurtaza.postman.co/workspace/Ahsan-Murtaza's-Workspace~574db4e7-324f-4f2d-8c9e-5019aac4538b/collection/46680606-897a9f4f-8b33-48a9-bdcd-f206fcf9a6b5?action=share&source=collection_link&creator=46680606"
+	},
+	"item": [
+		{
+			"name": "Users List",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.request.headers.add({\r",
+							"  key: \"x-api-key\",\r",
+							"  value: \"reqres-free-v1\"\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json();\r",
+							"console.log(\"User email:\", response.data[0].email);\r",
+							"\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"User list is not empty\", () => {\r",
+							"    pm.expect(response.data.length).to.be.above(0);\r",
+							"});\r",
+							"\r",
+							"// Added comprehensive tests (from previous suggestions)\r",
+							"pm.test(\"Response is an object\", () => {\r",
+							"    pm.expect(response).to.be.an('object');\r",
+							"});\r",
+							"pm.test(\"Response has 'data' property\", () => {\r",
+							"    pm.expect(response).to.have.property('data');\r",
+							"});\r",
+							"pm.test(\"'data' property is an array\", () => {\r",
+							"    pm.expect(response.data).to.be.an('array');\r",
+							"});\r",
+							"pm.test(\"Each user object has expected keys\", () => {\r",
+							"    response.data.forEach(user => {\r",
+							"        pm.expect(user).to.have.all.keys('id', 'email', 'first_name', 'last_name', 'avatar');\r",
+							"    });\r",
+							"});\r",
+							"pm.test(\"User ID is a number\", () => {\r",
+							"    pm.expect(typeof response.data[0].id).to.eql('number');\r",
+							"});\r",
+							"pm.test(\"User email is a string\", () => {\r",
+							"    pm.expect(typeof response.data[0].email).to.eql('string');\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://reqres.in/api/users",
+					"protocol": "https",
+					"host": [
+						"reqres",
+						"in"
+					],
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List Users By Query Params",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.request.headers.add({\r",
+							"  key: \"x-api-key\",\r",
+							"  value: \"reqres-free-v1\"\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseUrl}}/api/users?page=2",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"users"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Creating a new user",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.request.headers.add({\r",
+							"  key: \"x-api-key\",\r",
+							"  value: \"reqres-free-v1\"\r",
+							"});\r",
+							"\r",
+							"pm.variables.set(\"randomName\", \"User\" + Math.floor(Math.random()*1000));\r",
+							"pm.variables.set(\"randomJob\", \"QA_\" + Math.random().toString(36).substring(7));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let jsonData = pm.response.json();\r",
+							"console.log(\"Created User ID:\", jsonData.id);\r",
+							"console.log(\"Created At:\", jsonData.createdAt);\r",
+							"\r",
+							"// Check status\r",
+							"pm.test(\"Status is 201\", () => {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"// Check if ID and timestamp are returned\r",
+							"pm.test(\"Response contains user ID\", () => {\r",
+							"    pm.expect(jsonData).to.have.property(\"id\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains createdAt timestamp\", () => {\r",
+							"    pm.expect(jsonData).to.have.property(\"createdAt\");\r",
+							"});\r",
+							"\r",
+							"// Deliberate fail: Job should be 'WrongJob' (expected to fail)\r",
+							"pm.test(\"Deliberate Fail Test - Job Mismatch\", () => {\r",
+							"    pm.expect(jsonData.job).to.eql(\"WrongJob\"); \r",
+							"});\r",
+							"\r",
+							"// Reset variables after this request\r",
+							"pm.variables.unset(\"randomName\");\r",
+							"pm.variables.unset(\"randomJob\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Ahsan Murtaza\",\r\n  \"job\": \"QA intern\"\r\n}\r\n\r\n{\r\n  \"name\": \"{{randomName}}\",\r\n  \"job\": \"{{randomJob}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "text"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/users",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update User",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.request.headers.add({\r",
+							"  key: \"x-api-key\",\r",
+							"  value: \"reqres-free-v1\"\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"try {\r",
+							"    const data = pm.response.json();\r",
+							"\r",
+							"    // Status Code Assertion\r",
+							"    pm.test(\"Status is 200 OK\", () => {\r",
+							"        pm.response.to.have.status(200);\r",
+							"    });\r",
+							"\r",
+							"    // Response Body Structure Assertions\r",
+							"    pm.test(\"Response is an object\", () => {\r",
+							"        pm.expect(data).to.be.an('object');\r",
+							"    });\r",
+							"    pm.test(\"Response has 'name' property\", () => {\r",
+							"        pm.expect(data).to.have.property('name');\r",
+							"    });\r",
+							"    pm.test(\"Response has 'job' property\", () => {\r",
+							"        pm.expect(data).to.have.property('job');\r",
+							"    });\r",
+							"    pm.test(\"Response has 'updatedAt' property\", () => {\r",
+							"        pm.expect(data).to.have.property('updatedAt');\r",
+							"    });\r",
+							"\r",
+							"    // Value Verification Assertions\r",
+							"    pm.test(\"Name updated to 'Ahsan Murtaza'\", () => {\r",
+							"        pm.expect(data.name).to.eql(\"Ahsan Murtaza\");\r",
+							"    });\r",
+							"    pm.test(\"Job updated to 'SQA Engineer'\", () => {\r",
+							"        pm.expect(data.job).to.eql(\"SQA Engineer\");\r",
+							"    });\r",
+							"\r",
+							"    // Data Type Assertions\r",
+							"    pm.test(\"updatedAt is a string\", () => {\r",
+							"        pm.expect(typeof data.updatedAt).to.eql('string');\r",
+							"    });\r",
+							"\r",
+							"    console.log(\"Updated at:\", data.updatedAt);\r",
+							"\r",
+							"} catch (err) {\r",
+							"    console.error(\"Response not JSON or test error:\", err.message);\r",
+							"    pm.test(\"Response must be JSON\", () => {\r",
+							"        throw new Error(\"Expected JSON but got invalid data. Error: \" + err.message);\r",
+							"    });\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Ahsan Murtaza\",\r\n  \"job\": \"SQA Engineer\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/users/2",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Partial Update",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.request.headers.add({\r",
+							"  key: \"x-api-key\",\r",
+							"  value: \"reqres-free-v1\"\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let data = pm.response.json();\r",
+							"\r",
+							"// Status Code Assertion\r",
+							"pm.test(\"Status is 200 OK\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Response Body Structure Assertions\r",
+							"pm.test(\"Response is an object\", () => {\r",
+							"    pm.expect(data).to.be.an('object');\r",
+							"});\r",
+							"pm.test(\"Response has 'job' property\", () => {\r",
+							"    pm.expect(data).to.have.property('job');\r",
+							"});\r",
+							"pm.test(\"Response has 'updatedAt' property\", () => {\r",
+							"    pm.expect(data).to.have.property('updatedAt');\r",
+							"});\r",
+							"\r",
+							"// Value Verification Assertion\r",
+							"pm.test(\"Job updated using PATCH to 'Lead QA'\", () => {\r",
+							"    pm.expect(data.job).to.eql(\"Lead QA\");\r",
+							"});\r",
+							"\r",
+							"// Data Type Assertion\r",
+							"pm.test(\"updatedAt is a string\", () => {\r",
+							"    pm.expect(typeof data.updatedAt).to.eql('string');\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"job\": \"Lead QA\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/users/2",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.request.headers.add({\r",
+							"  key: \"x-api-key\",\r",
+							"  value: \"reqres-free-v1\"\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 204 No Content\", () => {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"job\": \"Lead QA\"\r\n}\r\n"
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/users/2",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register User",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.request.headers.add({\r",
+							"  key: \"x-api-key\",\r",
+							"  value: \"reqres-free-v1\"\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let jsonData = pm.response.json();\r",
+							"console.log(\"Full response:\", jsonData);\r",
+							"\r",
+							"// Status Code Assertion\r",
+							"pm.test(\"Status is 200 OK\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Response Body Structure Assertions\r",
+							"pm.test(\"Response is an object\", () => {\r",
+							"    pm.expect(jsonData).to.be.an('object');\r",
+							"});\r",
+							"pm.test(\"Response contains 'id' property\", () => {\r",
+							"    pm.expect(jsonData).to.have.property(\"id\");\r",
+							"});\r",
+							"pm.test(\"Response contains 'token' property\", () => {\r",
+							"    pm.expect(jsonData).to.have.property(\"token\");\r",
+							"});\r",
+							"\r",
+							"// Data Type Assertions\r",
+							"pm.test(\"ID is a number\", () => {\r",
+							"    pm.expect(typeof jsonData.id).to.eql('number');\r",
+							"});\r",
+							"pm.test(\"Token is a string\", () => {\r",
+							"    pm.expect(typeof jsonData.token).to.eql('string');\r",
+							"});\r",
+							"\r",
+							"// Value Verification / Token Specific Assertions\r",
+							"pm.test(\"Token is not empty\", () => {\r",
+							"    pm.expect(jsonData.token).to.not.be.empty;\r",
+							"});\r",
+							"\r",
+							"// Save the token for subsequent requests\r",
+							"pm.variables.set(\"userToken\", jsonData.token);\r",
+							"pm.test(\"Token is saved as a variable\", () => {\r",
+							"    pm.expect(pm.variables.get(\"userToken\")).to.eql(jsonData.token);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"eve.holt@reqres.in\",\r\n  \"password\": \"pistol\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/register",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delayed Response with Token",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.request.headers.add({\r",
+							"  key: \"x-api-key\",\r",
+							"  value: \"reqres-free-v1\"\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json(); // Ensure 'response' variable is correctly initialized\r",
+							"\r",
+							"// Status Code Assertion\r",
+							"pm.test(\"Response delay test successful (Status 200 OK)\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Response Body Structure Assertions\r",
+							"pm.test(\"Response is an object\", () => {\r",
+							"    pm.expect(response).to.be.an('object');\r",
+							"});\r",
+							"pm.test(\"Response has 'data' property\", () => {\r",
+							"    pm.expect(response).to.have.property('data');\r",
+							"});\r",
+							"pm.test(\"'data' property is an array\", () => {\r",
+							"    pm.expect(response.data).to.be.an('array');\r",
+							"});\r",
+							"pm.test(\"User list is not empty\", () => {\r",
+							"    pm.expect(response.data.length).to.be.above(0);\r",
+							"});\r",
+							"pm.test(\"Each user object has expected keys\", () => {\r",
+							"    response.data.forEach(user => {\r",
+							"        pm.expect(user).to.have.all.keys('id', 'email', 'first_name', 'last_name', 'avatar');\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"// Data Type Assertions for first user\r",
+							"pm.test(\"First user's ID is a number\", () => {\r",
+							"    pm.expect(typeof response.data[0].id).to.eql('number');\r",
+							"});\r",
+							"pm.test(\"First user's email is a string\", () => {\r",
+							"    pm.expect(typeof response.data[0].email).to.eql('string');\r",
+							"});\r",
+							"pm.test(\"First user's first_name is a string\", () => {\r",
+							"    pm.expect(typeof response.data[0].first_name).to.eql('string');\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true,
+				"disabledSystemHeaders": {
+					"content-type": true,
+					"content-length": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "\r\n"
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/users?delay=5",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"users"
+					],
+					"query": [
+						{
+							"key": "delay",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "BaseUrl",
+			"value": "https://reqres.in",
+			"type": "default"
+		}
+	]
+}
